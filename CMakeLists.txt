@@ -16,6 +16,7 @@ FetchContent_Declare(
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
+add_subdirectory(googletest EXCLUDE_FROM_ALL)
 enable_testing()    # Enables testing for this directory and below
 add_executable(ip_filter_test ip_filter_test.cpp ip_filter.cpp)
 target_link_libraries(ip_filter_test GTest::gtest_main)
