@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
-project(ip_filter_proj VERSION ${PROJECT_VESRION})
+project(ip_filter VERSION ${PROJECT_VESRION})
 
 # ++for google test
 include(FetchContent)   # run ..\CMake\share\cmake-X.YY\Modules\FetchContent.cmake
