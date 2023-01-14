@@ -16,7 +16,6 @@ FetchContent_Declare(
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
-add_subdirectory(googletest EXCLUDE_FROM_ALL)
 enable_testing()    # Enables testing for this directory and below
 add_executable(ip_filter_test ip_filter_test.cpp ip_filter.cpp)
 target_link_libraries(ip_filter_test GTest::gtest_main)
@@ -47,7 +46,7 @@ include(GoogleTest)               # run ..\CMake\share\cmake-X.YY\Modules\Google
 gtest_discover_tests(ip_filter_test)  # discover tests by asking the compiled test executable to enumerate its tests
 # ++for google test
 
-install(TARGETS ip_filter_cli RUNTIME DESTINATION bin)
+install(TARGETS ip_filter_cli RUNTIME DESTINATION bin_new)
 
 set(CPACK_GENERATOR DEB)
 
