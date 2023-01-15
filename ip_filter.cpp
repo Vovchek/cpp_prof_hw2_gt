@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <algorithm>
 
 #include "ip_filter.h"
 
@@ -12,7 +13,7 @@ using namespace std;
 // (".11", '.') -> ["", "11"]
 // ("11.22", '.') -> ["11", "22"]
 
-ip_type split(const string &str, char d)
+ip_type_s split(const string &str, char d)
 {
     vector<string> r;
 
@@ -31,13 +32,31 @@ ip_type split(const string &str, char d)
     return r;
 }
 
-bool is_valid_ip(const ip_type &ip)
+pair<bool, ip_type> ip_str_to_uint8(const ip_type_s &ip)
 {
+    ip_type ip_t;
     if(ip.size() != 4) {
+        return {false, ip_t};
+    }
+    for(auto &s : ip) {
+        int n;
+        if( !all_of(s.begin(), s.end(), ::isdigit) ||
+            (n = static_cast<unsigned>(stoi(s))) > 255) {
+            return {false, ip_t};
+        }
+        ip_t.push_back(static_cast<uint8_t>(n));
+    }
+    return {true, ip_t};
+}
+
+bool is_valid_ip(const ip_type_s &ip)
+{
+  if(ip.size() != 4) {
         return false;
     }
     for(auto &s : ip) {
-        if(static_cast<unsigned>(stoi(s)) > 255) {
+        if(!all_of(s.begin(), s.end(), ::isdigit) ||
+        static_cast<unsigned>(stoi(s)) > 255) {
             return false;
         }
     }
@@ -48,47 +67,38 @@ bool is_valid_ip(const ip_type &ip)
 void print_ip_pool(const ip_pool_type &ip_pool)
 {
     for(const auto &ip : ip_pool) {
-        for(const auto &ip_part : ip) {
-            if(&ip_part != &ip[0]) { // is it evil to play with pointers... just to avoid multiplying entities?
-                cout << ".";
-            }
-            cout << ip_part;
-        }
-        cout << endl;
+        cout << static_cast<unsigned>(ip[0]) << '.' 
+            << static_cast<unsigned>(ip[1]) << '.' 
+            << static_cast<unsigned>(ip[2]) << '.' 
+            << static_cast<unsigned>(ip[3]) << '\n';
     }
 }
 
-// compare IPs
 bool operator < (const ip_type &a, const ip_type &b)
 {
-    auto it_b = b.begin();
-    for(const auto &s_a : a) {
-        if(it_b == b.end()) { // i really feel uncomfortable without this rudundant check
-            return false; // common parts of a == b
-        }
-        auto n_a = stoi(s_a);
-        auto n_b = stoi(*it_b);
-        if(n_a < n_b) {
-            return true; // a < b
-        } else if(n_a > n_b) {
-            return false; // a > b
+    auto it_b {b.begin()};
+    for(auto n_a : a) {
+        if(n_a < *it_b) {
+            return true;
+        } else if(n_a > *it_b) {
+            return false;
         }
         ++it_b;
     }
-    return false; // common parts of a == b
+    return false; // a == b
 }
 
-static bool ip_contains(const ip_type &ip, unsigned char n)
+static bool ip_contains(const ip_type &ip, uint8_t n)
 {
-    for(auto &s : ip) {
-        if(static_cast<unsigned char>(stoi(s)) == n) {
+    for(auto ax : ip) {
+        if(ax == n) {
             return true;
         }
     }
     return false;
 }
 
-ip_pool_type filter_ip_any(const ip_pool_type &ip_pool, unsigned char n)
+ip_pool_type filter_ip_any(const ip_pool_type &ip_pool, uint8_t n)
 {
     ip_pool_type filtered;
 
@@ -100,25 +110,24 @@ ip_pool_type filter_ip_any(const ip_pool_type &ip_pool, unsigned char n)
     return filtered;
 }
 
-ip_pool_type filter_ip(const ip_pool_type &ip_pool, unsigned char n1)
+ip_pool_type filter_ip(const ip_pool_type &ip_pool, uint8_t n1)
 {
     ip_pool_type filtered;
 
     for(const auto &ip : ip_pool) {
-        if(static_cast<unsigned char>(stoi(ip[0])) == n1) {
+        if(ip[0] == n1) {
             filtered.push_back(ip);
         }
     }
     return filtered;
 }
 
-ip_pool_type filter_ip(const ip_pool_type &ip_pool, unsigned char n1, unsigned char n2)
+ip_pool_type filter_ip(const ip_pool_type &ip_pool, uint8_t n1, uint8_t n2)
 {
     ip_pool_type filtered;
 
     for(const auto &ip : ip_pool) {
-        if(static_cast<unsigned char>(stoi(ip[0])) == n1 &&
-            static_cast<unsigned char>(stoi(ip[1])) == n2) {
+        if(ip[0] == n1 && ip[1] == n2) {
             filtered.push_back(ip);
         }
     }

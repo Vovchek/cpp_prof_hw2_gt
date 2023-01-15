@@ -19,9 +19,10 @@ UNUSED(argv);
 
         for(string line; getline(cin, line);)
         {
-            ip_type v = split(split(line, '\t').at(0), '.');
-            if(is_valid_ip(v)) {
-                ip_pool.push_back(v);
+            ip_type_s v = split(split(line, '\t').at(0), '.');
+            auto [valid_ip, ip] = ip_str_to_uint8(v);
+            if(valid_ip) {
+                ip_pool.push_back(ip);
             } else {
                 // throw ?
             }
@@ -41,7 +42,7 @@ UNUSED(argv);
 
         // TODO filter by first byte and output
         // ip = filter(1)
-        cout << '\n' << "filter(1)" << endl;
+        //cout << '\n' << "filter(1)" << endl;
         print_ip_pool(filter_ip(ip_pool, 1));
 
         // 1.231.69.33
@@ -52,7 +53,7 @@ UNUSED(argv);
 
         // TODO filter by first and second bytes and output
         // ip = filter(46, 70)
-        cout << '\n' << "filter(46, 70)" << endl;
+        //cout << '\n' << "filter(46, 70)" << endl;
         print_ip_pool(filter_ip(ip_pool, 46, 70));
 
         // 46.70.225.39
@@ -62,7 +63,7 @@ UNUSED(argv);
 
         // TODO filter by any byte and output
         // ip = filter_any(46)
-        cout << '\n' << "filter_any(46)" << endl;
+        //cout << '\n' << "filter_any(46)" << endl;
         print_ip_pool(filter_ip_any(ip_pool, 46));
 
         // 186.204.34.46
