@@ -46,7 +46,7 @@ include(GoogleTest)               # run ..\CMake\share\cmake-X.YY\Modules\Google
 gtest_discover_tests(ip_filter_test)  # discover tests by asking the compiled test executable to enumerate its tests
 # ++for google test
 
-install(TARGETS ip_filter_cli RUNTIME DESTINATION bin)
+install(TARGETS ip_filter_cli ip_filter_test RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 
